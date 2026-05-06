@@ -73,6 +73,38 @@ The shell setup is intentionally a separate step so you can opt out.
     └── starship.toml
 ```
 
+## Running linux/amd64 on Apple Silicon
+
+The bootstrap installs Rosetta 2 and initializes a podman machine with the
+`--rosetta` backend, so cross-arch work runs at near-native speed (no QEMU).
+
+**Build an amd64 image:**
+
+```bash
+podman build --platform=linux/amd64 -t myimage:amd64 .
+```
+
+**Run an amd64-only binary** (e.g. the OCP 3.6 `oc` CLI, which has no arm64
+build) inside an amd64 Linux container:
+
+```bash
+# Drop the amd64 oc binary somewhere local, then:
+podman run --platform=linux/amd64 --rm -it \
+  -v "$HOME/bin:/host-bin:ro" \
+  registry.access.redhat.com/ubi9 \
+  /host-bin/oc-3.6 version
+```
+
+**One-off amd64 shell:**
+
+```bash
+podman run --platform=linux/amd64 --rm -it registry.access.redhat.com/ubi9 bash
+```
+
+If you ever need a persistent Linux dev environment (long-lived services,
+editing code from inside Linux), reach for `lima` instead — but for build
+and CLI work, podman+Rosetta is enough.
+
 ## Notes & caveats
 
 - **VSCodium + Claude Code extension.** VSCodium pulls extensions from Open
