@@ -30,6 +30,7 @@ run_step 01-brew.sh
 run_step 02-extras.sh
 run_step 03-ghostty-shaders.sh
 run_step 04-vscodium-extensions.sh
+run_step 05-oc-3.6.sh
 
 if [[ "${1:-}" == "shell" ]]; then
   echo

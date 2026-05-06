@@ -85,15 +85,20 @@ podman build --platform=linux/amd64 -t myimage:amd64 .
 ```
 
 **Run an amd64-only binary** (e.g. the OCP 3.6 `oc` CLI, which has no arm64
-build) inside an amd64 Linux container:
+build) inside an amd64 Linux container. The bootstrap script
+[`05-oc-3.6.sh`](scripts/05-oc-3.6.sh) auto-downloads the binary to
+`$HOME/bin-linux-amd64/oc-3.6` (a dedicated folder kept *off* macOS `$PATH`
+so you never accidentally exec a Linux ELF on the host):
 
 ```bash
-# Drop the amd64 oc binary somewhere local, then:
 podman run --platform=linux/amd64 --rm -it \
-  -v "$HOME/bin:/host-bin:ro" \
+  -v "$HOME/bin-linux-amd64:/host-bin:ro" \
   registry.access.redhat.com/ubi9 \
   /host-bin/oc-3.6 version
 ```
+
+Drop any other Linux-only binaries into `$HOME/bin-linux-amd64/` and they'll
+be available at `/host-bin/<name>` inside the container.
 
 **One-off amd64 shell:**
 
