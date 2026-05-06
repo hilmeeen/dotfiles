@@ -1,0 +1,19 @@
+# Ghostty configuration. Linked to ~/.config/ghostty/config by 03-ghostty-shaders.sh.
+# Reload with Cmd+Shift+, or restart Ghostty.
+
+font-family = "JetBrainsMono Nerd Font"
+font-size = 14
+
+# Stack the retro-terminal scanline/curvature look with the TFT subpixel effect.
+# Order matters: each shader runs on the previous one's output.
+custom-shader = ./shaders/retro-terminal.glsl
+custom-shader = ./shaders/tft.glsl
+
+# A dark background lets the shaders show their glow/scanlines properly.
+background-opacity = 1.0
+theme = "GruvboxDark"
+
+# macOS niceties.
+macos-titlebar-style = transparent
+window-padding-x = 8
+window-padding-y = 8

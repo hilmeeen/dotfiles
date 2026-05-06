@@ -1,0 +1,51 @@
+# Starship prompt config. https://starship.rs/config
+# Minimal, fast, gives you the things you actually look at.
+
+format = """
+$directory\
+$git_branch$git_status\
+$kubernetes\
+$python$nodejs$golang$rust$java\
+$cmd_duration\
+$line_break\
+$character"""
+
+add_newline = true
+
+[directory]
+truncation_length = 4
+truncate_to_repo = true
+style = "bold cyan"
+
+[git_branch]
+symbol = " "
+style = "bold purple"
+
+[git_status]
+style = "bold yellow"
+
+[kubernetes]
+disabled = false
+format = '[$symbol$context( \($namespace\))]($style) '
+symbol = "⎈ "
+style = "bold blue"
+
+[cmd_duration]
+min_time = 2_000
+format = "[took $duration]($style) "
+style = "yellow"
+
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol = "[✗](bold red)"
+
+[python]
+symbol = " "
+[nodejs]
+symbol = " "
+[golang]
+symbol = " "
+[rust]
+symbol = " "
+[java]
+symbol = " "
