@@ -39,6 +39,7 @@ The shell setup is intentionally a separate step so you can opt out.
 - Podman Desktop
 - Zen Browser
 - CotEditor (Notepad++ replacement — plain-text editor with macOS auto-save & version history, so unsaved windows persist across crashes/restarts)
+- Shottr (Greenshot/Lightshot replacement — local-only screenshot tool with blur/highlight/arrow/line/text annotations, scrolling capture, OCR; no cloud, no account)
 
 ### Terminal look
 - Ghostty + JetBrains Mono Nerd Font
