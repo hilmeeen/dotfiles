@@ -1,10 +1,6 @@
 # Brewfile — declarative package list for `brew bundle`.
 # Edit freely; the install scripts run `brew bundle --file=Brewfile`.
 
-# --- Taps -------------------------------------------------------------------
-tap "homebrew/bundle"
-tap "homebrew/cask-fonts"
-
 # --- Languages & runtimes ---------------------------------------------------
 brew "go"
 brew "node"          # ships npm
