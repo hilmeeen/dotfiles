@@ -76,8 +76,10 @@ The shell setup is intentionally a separate step so you can opt out.
 
 ## Running linux/amd64 on Apple Silicon
 
-The bootstrap installs Rosetta 2 and initializes a podman machine with the
-`--rosetta` backend, so cross-arch work runs at near-native speed (no QEMU).
+The bootstrap installs Rosetta 2 and initializes a podman machine. Modern
+Podman on Apple Silicon automatically uses Rosetta for linux/amd64 emulation
+whenever Rosetta is installed on the host — no `--rosetta` flag required (it's
+removed in Podman 5.x). Cross-arch work runs at near-native speed, no QEMU.
 
 **Build an amd64 image:**
 
@@ -85,17 +87,17 @@ The bootstrap installs Rosetta 2 and initializes a podman machine with the
 podman build --platform=linux/amd64 -t myimage:amd64 .
 ```
 
-**Run an amd64-only binary** (e.g. the OCP 3.6 `oc` CLI, which has no arm64
-build) inside an amd64 Linux container. The bootstrap script
-[`05-oc-3.6.sh`](scripts/05-oc-3.6.sh) auto-downloads the binary to
-`$HOME/bin-linux-amd64/oc-3.6` (a dedicated folder kept *off* macOS `$PATH`
+**Run an amd64-only binary** (e.g. the OCP 3.11 `oc` CLI — no native macOS
+arm64 build exists) inside an amd64 Linux container. The bootstrap script
+[`05-oc-3.11.sh`](scripts/05-oc-3.11.sh) auto-downloads the binary to
+`$HOME/bin-linux-amd64/oc-3.11` (a dedicated folder kept *off* macOS `$PATH`
 so you never accidentally exec a Linux ELF on the host):
 
 ```bash
 podman run --platform=linux/amd64 --rm -it \
   -v "$HOME/bin-linux-amd64:/host-bin:ro" \
   registry.access.redhat.com/ubi9 \
-  /host-bin/oc-3.6 version
+  /host-bin/oc-3.11 version --client
 ```
 
 Drop any other Linux-only binaries into `$HOME/bin-linux-amd64/` and they'll
@@ -106,6 +108,38 @@ be available at `/host-bin/<name>` inside the container.
 ```bash
 podman run --platform=linux/amd64 --rm -it registry.access.redhat.com/ubi9 bash
 ```
+
+**Long-lived amd64 shell** (keep an idle container around so `podman exec` is
+instant — useful when you have several Linux-only binaries in `~/bin-linux-amd64`
+and want to bounce in and out without re-pulling images):
+
+```bash
+# Start once. --replace makes this re-runnable; --restart=unless-stopped
+# survives podman machine reboots. `sleep infinity` keeps the container idle.
+podman run -d --replace --name oc-box \
+  --platform=linux/amd64 \
+  --restart=unless-stopped \
+  -v "$HOME/bin-linux-amd64:/host-bin:ro" \
+  -e PATH=/host-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+  registry.access.redhat.com/ubi9 \
+  sleep infinity
+
+# Enter an interactive shell.
+podman exec -it oc-box bash
+
+# Or run a single command without entering.
+podman exec -it oc-box oc-3.11 version --client
+
+# Pause / resume / delete.
+podman stop oc-box
+podman start oc-box
+podman rm -f oc-box
+```
+
+Bind mounts like `/host-bin` persist on macOS, but anything you install inside
+the container root fs (`dnf install …`, `pip install …`) is lost on `podman rm`.
+For persistent root-fs state, either `podman commit oc-box my-oc-box:latest`
+after setup, or write a Containerfile.
 
 If you ever need a persistent Linux dev environment (long-lived services,
 editing code from inside Linux), reach for `lima` instead — but for build

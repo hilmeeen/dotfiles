@@ -1,17 +1,24 @@
 #!/usr/bin/env bash
-# Download the OCP 3.6 `oc` client (linux/amd64 only — no arm64 build exists)
-# into $HOME/bin-linux-amd64/oc-3.6. The binary is a Linux ELF, so it only
-# runs *inside* a linux/amd64 container (podman + Rosetta provides this).
-# We deliberately keep this folder OFF $PATH on macOS so we never try to
-# exec a Linux binary on the host by accident.
+# Download the OCP 3.11 `oc` client (linux/amd64) into
+# $HOME/bin-linux-amd64/oc-3.11. There is no native macOS arm64 build, and
+# the linux-aarch64 build is still a Linux ELF — so we standardize on
+# linux/amd64 and run it inside a podman+Rosetta container.
 #
-# Source: https://mirror.openshift.com/pub/openshift-v3/clients/3.6.173.0.96/linux/oc.tar.gz
+# 3.11.346 (Aug 2021) is the last v3-line release on the mirror. Its Go
+# runtime is recent enough to avoid the lfstackpush panic that kills the
+# old oc 3.6 binary under emulation, and it talks to OpenShift 3.x servers
+# fine for everyday CLI work.
+#
+# We deliberately keep $HOME/bin-linux-amd64 OFF $PATH on macOS so we never
+# accidentally exec a Linux ELF on the host.
+#
+# Source: https://mirror.openshift.com/pub/openshift-v3/clients/3.11.346/linux/oc.tar.gz
 set -euo pipefail
 
-OC_VERSION="3.6.173.0.96"
+OC_VERSION="3.11.346"
 OC_URL="https://mirror.openshift.com/pub/openshift-v3/clients/${OC_VERSION}/linux/oc.tar.gz"
 LINUX_BIN_DIR="$HOME/bin-linux-amd64"
-DEST="$LINUX_BIN_DIR/oc-3.6"
+DEST="$LINUX_BIN_DIR/oc-3.11"
 
 mkdir -p "$LINUX_BIN_DIR"
 
@@ -51,5 +58,5 @@ Run it inside a linux/amd64 container, e.g.:
   podman run --platform=linux/amd64 --rm -it \\
     -v "\$HOME/bin-linux-amd64:/host-bin:ro" \\
     registry.access.redhat.com/ubi9 \\
-    /host-bin/oc-3.6 version
+    /host-bin/oc-3.11 version --client
 EOF
