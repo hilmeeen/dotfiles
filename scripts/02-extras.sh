@@ -14,9 +14,11 @@ if ! command -v rustc >/dev/null 2>&1; then
 fi
 
 # --- Claude Code CLI --------------------------------------------------------
+# Use the official native installer (no Node.js dependency, built-in auto-update).
+# Docs: https://code.claude.com/docs/en/setup
 if ! command -v claude >/dev/null 2>&1; then
-  echo "Installing Claude Code CLI..."
-  npm install -g @anthropic-ai/claude-code
+  echo "Installing Claude Code CLI (native)..."
+  curl -fsSL https://claude.ai/install.sh | bash
 fi
 
 # --- Rosetta 2 + podman machine (for linux/amd64 cross-arch) ---------------
