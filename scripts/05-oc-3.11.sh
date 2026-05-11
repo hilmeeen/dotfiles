@@ -19,11 +19,22 @@ OC_VERSION="3.11.346"
 OC_URL="https://mirror.openshift.com/pub/openshift-v3/clients/${OC_VERSION}/linux/oc.tar.gz"
 LINUX_BIN_DIR="$HOME/bin-linux-amd64"
 DEST="$LINUX_BIN_DIR/oc-3.11"
+LINK="$LINUX_BIN_DIR/oc"
 
 mkdir -p "$LINUX_BIN_DIR"
 
+# Relative target (bare filename) so the link resolves the same way on the host
+# ($HOME/bin-linux-amd64/oc -> oc-3.11) and inside the container (/host-bin/oc
+# -> oc-3.11). Re-point this to a different oc-X.Y when bumping versions and
+# every call site that uses `oc` follows automatically.
+ensure_symlink() {
+  ln -sfn oc-3.11 "$LINK"
+  echo "Linked $LINK -> oc-3.11"
+}
+
 if [[ -x "$DEST" ]]; then
   echo "$DEST already present — skipping download."
+  ensure_symlink
   exit 0
 fi
 
@@ -44,6 +55,7 @@ fi
 mv "$oc_bin" "$DEST"
 chmod +x "$DEST"
 echo "Installed $DEST"
+ensure_symlink
 
 # Sanity check: file should be an ELF x86_64 binary.
 if command -v file >/dev/null 2>&1; then
@@ -57,6 +69,6 @@ Run it inside a linux/amd64 container, e.g.:
 
   podman run --platform=linux/amd64 --rm -it \\
     -v "\$HOME/bin-linux-amd64:/host-bin:ro" \\
-    registry.access.redhat.com/ubi9 \\
-    /host-bin/oc-3.11 version --client
+    registry.access.redhat.com/ubi9-minimal \\
+    /host-bin/oc version --client
 EOF
