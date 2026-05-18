@@ -36,5 +36,8 @@ alias ll='ls -lah'
 alias k='kubectl'
 alias g='git'
 
+# Custom functions and aliases.
+for f in "$HOME/.zshrc.d/"*.zsh(N); do source "$f"; done
+
 # Starship prompt (last so it overrides any earlier PROMPT settings).
 eval "$(starship init zsh)"
