@@ -11,7 +11,7 @@ custom-shader = ./shaders/tft.glsl
 
 # A dark background lets the shaders show their glow/scanlines properly.
 background-opacity = 1.0
-theme = "GruvboxDark"
+theme = "Gruvbox Dark"
 
 # macOS niceties.
 macos-titlebar-style = transparent
