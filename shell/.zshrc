@@ -17,7 +17,7 @@ source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" 2>/d
 source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" 2>/dev/null
 
 # fzf keybindings + completion.
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source <(fzf --zsh)
 
 # Toolchain PATHs.
 export PATH="$HOME/.cargo/bin:$PATH"               # rust
