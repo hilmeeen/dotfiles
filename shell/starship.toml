@@ -18,7 +18,7 @@ truncate_to_repo = true
 style = "bold cyan"
 
 [git_branch]
-symbol = " "
+symbol = " "
 style = "bold purple"
 
 [git_status]
@@ -40,12 +40,12 @@ success_symbol = "[➜](bold green)"
 error_symbol = "[✗](bold red)"
 
 [python]
-symbol = " "
+symbol = " "
 [nodejs]
-symbol = " "
+symbol = " "
 [golang]
-symbol = " "
+symbol = " "
 [rust]
-symbol = " "
+symbol = " "
 [java]
-symbol = " "
+symbol = " "

@@ -31,6 +31,7 @@ run_step 02-extras.sh
 run_step 03-ghostty-shaders.sh
 run_step 04-vscodium-extensions.sh
 run_step 05-oc-3.11.sh
+run_step 06-app-fonts.sh
 
 if [[ "${1:-}" == "shell" ]]; then
   echo
