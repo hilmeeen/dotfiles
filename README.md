@@ -48,6 +48,12 @@ The shell setup is intentionally a separate step so you can opt out.
   cloned into `~/.config/ghostty/shaders`.
 - Edit shader stack in [`ghostty/config`](ghostty/config) — multiple
   `custom-shader =` lines compose, each running on the previous one's output.
+- [`06-app-fonts.sh`](scripts/06-app-fonts.sh) also wires the same Nerd Font
+  into VSCodium (editor + integrated terminal) and macOS Terminal.app (Basic
+  profile). Ghostty already reads it from [`ghostty/config`](ghostty/config).
+  The starship prompt in [`shell/starship.toml`](shell/starship.toml) uses
+  Nerd Font glyphs ( python,  node,  go,  rust,  java,  git
+  branch), so the font is required for the prompt to render correctly.
 
 ### Optional shell (run with `./install.sh shell`)
 - zsh + starship prompt
@@ -65,7 +71,9 @@ The shell setup is intentionally a separate step so you can opt out.
 │   ├── 01-brew.sh             # brew bundle
 │   ├── 02-extras.sh           # rustup-init, claude code via npm
 │   ├── 03-ghostty-shaders.sh  # clone shaders, link config
-│   └── 04-vscodium-extensions.sh  # sideload Claude Code .vsix
+│   ├── 04-vscodium-extensions.sh  # sideload Claude Code .vsix
+│   ├── 05-oc-3.11.sh          # amd64 oc CLI for OCP 3.11
+│   └── 06-app-fonts.sh        # Nerd Font for VSCodium + Terminal.app
 ├── ghostty/
 │   └── config                 # symlinked into ~/.config/ghostty/
 └── shell/                     # opt-in
