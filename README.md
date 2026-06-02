@@ -33,7 +33,8 @@ The shell setup is intentionally a separate step so you can opt out.
 
 ### GUI apps
 - Ghostty (terminal, with shaders)
-- VSCodium (with Claude Code extension sideloaded from VS Code Marketplace)
+- VSCodium (Claude Code extension sideloaded from VS Code Marketplace; Dracula
+  + Solarized themes, defaulting to Solarized Dark)
 - IntelliJ IDEA Community
 - KeyStore Explorer
 - Podman Desktop
@@ -71,7 +72,7 @@ The shell setup is intentionally a separate step so you can opt out.
 │   ├── 01-brew.sh             # brew bundle
 │   ├── 02-extras.sh           # rustup-init, claude code via npm
 │   ├── 03-ghostty-shaders.sh  # clone shaders, link config
-│   ├── 04-vscodium-extensions.sh  # sideload Claude Code .vsix
+│   ├── 04-vscodium-extensions.sh  # sideload Claude Code .vsix; themes + default
 │   ├── 05-oc-3.11.sh          # amd64 oc CLI for OCP 3.11
 │   └── 06-app-fonts.sh        # Nerd Font for VSCodium + Terminal.app
 ├── ghostty/
@@ -179,6 +180,11 @@ and CLI work, podman+Rosetta is enough.
   sideloads it from the VS Code Marketplace API as a `.vsix`. Re-run that
   script periodically to pick up updates, since VSCodium's auto-update
   doesn't see Marketplace-only extensions.
+- **VSCodium themes.** The same script installs the Dracula theme from Open VSX
+  and pins `workbench.colorTheme` to **Solarized Dark** (built into VSCodium, no
+  extension needed). Switch anytime via the theme picker; the script uses
+  `setdefault`, so a theme you pick manually survives re-runs. To reset it back
+  to Solarized Dark, delete the `workbench.colorTheme` key and re-run.
 - **IntelliJ edition.** [`Brewfile`](Brewfile) installs Community Edition
   (`intellij-idea-ce`). Swap to `intellij-idea` for Ultimate.
 - **Java version.** Pinned to `temurin@25` (Java 25 LTS, released Sep 2025).
