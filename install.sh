@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # macOS M-series dotfiles bootstrap.
 # Usage:
-#   ./install.sh         # core install (CLIs, apps, ghostty, vscodium ext)
-#   ./install.sh shell   # also run optional zsh + starship setup
+#   ./install.sh              # core install (CLIs, apps, ghostty, vscodium ext)
+#   ./install.sh shell        # + optional zsh + starship setup
+#   ./install.sh logo         # + optional custom VSCodium blank-page logo (sudo)
+#   ./install.sh shell logo   # combine optional steps in any order
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -33,12 +35,28 @@ run_step 04-vscodium-extensions.sh
 run_step 05-oc-3.11.sh
 run_step 06-app-fonts.sh
 
-if [[ "${1:-}" == "shell" ]]; then
-  echo
-  echo "==> optional shell setup"
-  bash "$DOTFILES_DIR/shell/install-shell.sh"
-fi
+# Optional opt-in steps, runnable in any order: ./install.sh shell logo
+for opt in "$@"; do
+  case "$opt" in
+    shell)
+      echo
+      echo "==> optional shell setup"
+      bash "$DOTFILES_DIR/shell/install-shell.sh"
+      ;;
+    logo)
+      echo
+      echo "==> optional VSCodium logo (needs sudo; reverts on VSCodium update)"
+      # Non-fatal: a declined sudo shouldn't abort an otherwise-done bootstrap.
+      bash "$DOTFILES_DIR/scripts/07-vscodium-logo.sh" ||
+        echo "VSCodium logo step skipped (sudo declined or failed) — continuing." >&2
+      ;;
+    *)
+      echo "Unknown option '$opt' (known: shell, logo)" >&2
+      ;;
+  esac
+done
 
 echo
 echo "Done. Open a new terminal session to pick up PATH changes."
 echo "If you skipped shell setup, run: $DOTFILES_DIR/shell/install-shell.sh"
+echo "Custom VSCodium logo (opt-in): bash $DOTFILES_DIR/scripts/07-vscodium-logo.sh"
