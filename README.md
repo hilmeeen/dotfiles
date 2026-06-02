@@ -9,11 +9,13 @@ and (optionally) shell prompt I use for work.
 git clone <this-repo> ~/dotfiles
 cd ~/dotfiles
 chmod +x install.sh scripts/*.sh shell/install-shell.sh
-./install.sh           # core install
-./install.sh shell     # core install + zsh/starship setup
+./install.sh                # core install
+./install.sh shell          # + zsh/starship setup
+./install.sh logo           # + custom VSCodium blank-page logo (sudo)
+./install.sh shell logo     # combine optional steps in any order
 ```
 
-The shell setup is intentionally a separate step so you can opt out.
+The shell and logo steps are intentionally separate so you can opt out.
 
 ## What gets installed
 
@@ -61,6 +63,24 @@ The shell setup is intentionally a separate step so you can opt out.
 - zsh-autosuggestions, zsh-syntax-highlighting, fzf keybindings
 - Symlinks `~/.zshrc` and `~/.config/starship.toml` to files in [`shell/`](shell/)
 
+### Optional VSCodium logo (run with `./install.sh logo`)
+Replaces the faded logo on VSCodium's empty editor / blank page (the
+"letterpress" mark) with a custom image — by default the VS Code logo from
+[Aikoyori/ProgrammingVTuberLogos](https://github.com/Aikoyori/ProgrammingVTuberLogos).
+
+- [`07-vscodium-logo.sh`](scripts/07-vscodium-logo.sh) fetches the PNG, wraps it
+  in a valid SVG (the editor CSS expects a `*.svg`) at 30% opacity, and swaps the
+  four theme variants in the app bundle. It patches no code, so it does **not**
+  trigger the "installation appears corrupt" warning.
+- Needs `sudo` (the files are root-owned) and **reverts on every VSCodium
+  update** — just re-run it. Restart VSCodium (Cmd+Q) to see the change.
+- Tweak the fade: `LETTERPRESS_OPACITY=0.45 bash scripts/07-vscodium-logo.sh`
+- Use another logo: `LOGO_URL=https://…/my.png bash scripts/07-vscodium-logo.sh`
+- Restore the stock logo: `bash scripts/07-vscodium-logo.sh restore`
+
+The fetched logo and a backup of the stock SVGs live under `vscodium/`, which is
+gitignored — only the script is tracked.
+
 ## Structure
 
 ```
@@ -74,9 +94,11 @@ The shell setup is intentionally a separate step so you can opt out.
 │   ├── 03-ghostty-shaders.sh  # clone shaders, link config
 │   ├── 04-vscodium-extensions.sh  # sideload Claude Code .vsix; themes + default
 │   ├── 05-oc-3.11.sh          # amd64 oc CLI for OCP 3.11
-│   └── 06-app-fonts.sh        # Nerd Font for VSCodium + Terminal.app
+│   ├── 06-app-fonts.sh        # Nerd Font for VSCodium + Terminal.app
+│   └── 07-vscodium-logo.sh    # swap VSCodium blank-page logo (opt-in, sudo)
 ├── ghostty/
 │   └── config                 # symlinked into ~/.config/ghostty/
+├── vscodium/                  # gitignored: fetched logo + stock-SVG backup
 └── shell/                     # opt-in
     ├── install-shell.sh
     ├── .zshrc
@@ -185,6 +207,11 @@ and CLI work, podman+Rosetta is enough.
   extension needed). Switch anytime via the theme picker; the script uses
   `setdefault`, so a theme you pick manually survives re-runs. To reset it back
   to Solarized Dark, delete the `workbench.colorTheme` key and re-run.
+- **VSCodium blank-page logo.** The opt-in
+  [`07-vscodium-logo.sh`](scripts/07-vscodium-logo.sh) swaps the empty-editor
+  "letterpress" mark for a custom image. It edits files inside the app bundle, so
+  a VSCodium update restores the stock logo — re-run to reapply (`restore` arg
+  reverts deliberately). Patches no code, so no "corrupt installation" warning.
 - **IntelliJ edition.** [`Brewfile`](Brewfile) installs Community Edition
   (`intellij-idea-ce`). Swap to `intellij-idea` for Ultimate.
 - **Java version.** Pinned to `temurin@25` (Java 25 LTS, released Sep 2025).
