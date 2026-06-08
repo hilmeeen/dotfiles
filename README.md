@@ -35,7 +35,7 @@ The shell and logo steps are intentionally separate so you can opt out.
 
 ### GUI apps
 - Ghostty (terminal, with shaders)
-- VSCodium (Claude Code extension sideloaded from VS Code Marketplace; Dracula
+- VSCodium (Claude Code extension from Open VSX; Dracula
   + Solarized themes defaulting to Solarized Dark; JetBrains icon theme; plus
   rainbow-csv, a JSON sort/format helper, and Git Graph)
 - IntelliJ IDEA Community
@@ -198,12 +198,13 @@ and CLI work, podman+Rosetta is enough.
 
 ## Notes & caveats
 
-- **VSCodium + Claude Code extension.** VSCodium pulls extensions from Open
-  VSX, where the official Claude Code extension isn't published. The
+- **VSCodium + Claude Code extension.** The official Claude Code extension is
+  now published on Open VSX (the registry VSCodium ships with), including
+  platform-specific builds. The
   [`04-vscodium-extensions.sh`](scripts/04-vscodium-extensions.sh) script
-  sideloads it from the VS Code Marketplace API as a `.vsix`. Re-run that
-  script periodically to pick up updates, since VSCodium's auto-update
-  doesn't see Marketplace-only extensions.
+  installs it by id like every other extension — `codium --install-extension`
+  picks the build matching the host os/arch automatically. Re-run that script
+  periodically to pick up updates.
 - **VSCodium themes, icons & extensions.** The same script installs a handful of
   extensions from Open VSX — the **Dracula** color theme, the **JetBrains** icon
   theme, **rainbow-csv**, a **JSON sort/format** helper, and **Git Graph** (a
