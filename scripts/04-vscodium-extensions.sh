@@ -20,6 +20,7 @@ OPENVSX_EXTS=(
   "ardonplay.vscode-jetbrains-icon-theme"     # JetBrains file/folder icon theme
   "mechatroner.rainbow-csv"                   # colorize CSV/TSV columns
   "saltcoreyan.json-format-sortcore"          # format + sort JSON keys
+  "mhutchie.git-graph"                        # GitLab-style repository/commit graph in-editor
 )
 
 tmpdir="$(mktemp -d)"

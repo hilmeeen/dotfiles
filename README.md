@@ -37,13 +37,14 @@ The shell and logo steps are intentionally separate so you can opt out.
 - Ghostty (terminal, with shaders)
 - VSCodium (Claude Code extension sideloaded from VS Code Marketplace; Dracula
   + Solarized themes defaulting to Solarized Dark; JetBrains icon theme; plus
-  rainbow-csv and a JSON sort/format helper)
+  rainbow-csv, a JSON sort/format helper, and Git Graph)
 - IntelliJ IDEA Community
 - KeyStore Explorer
 - Podman Desktop
 - Zen Browser
 - CotEditor (Notepad++ replacement — plain-text editor with macOS auto-save & version history, so unsaved windows persist across crashes/restarts)
 - Shottr (Greenshot/Lightshot replacement — local-only screenshot tool with blur/highlight/arrow/line/text annotations, scrolling capture, OCR; no cloud, no account)
+- GitUp (FOSS Git GUI with a live commit/branch graph — GitLab-style network view that GitHub lacks)
 
 ### Terminal look
 - Ghostty + JetBrains Mono Nerd Font
@@ -205,7 +206,8 @@ and CLI work, podman+Rosetta is enough.
   doesn't see Marketplace-only extensions.
 - **VSCodium themes, icons & extensions.** The same script installs a handful of
   extensions from Open VSX — the **Dracula** color theme, the **JetBrains** icon
-  theme, **rainbow-csv**, and a **JSON sort/format** helper — and seeds default
+  theme, **rainbow-csv**, a **JSON sort/format** helper, and **Git Graph** (a
+  GitLab-style repository/commit graph in the editor) — and seeds default
   settings: `workbench.colorTheme` → **Solarized Dark** (built into VSCodium, no
   extension needed), `workbench.iconTheme` → the JetBrains icons, the sidebar on
   the right, and Claude Code in the panel. Each default is applied with
