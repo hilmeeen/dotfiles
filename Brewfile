@@ -4,9 +4,9 @@
 # --- Languages & runtimes ---------------------------------------------------
 brew "go"
 brew "node"          # ships npm
-brew "python@3.13"   # latest stable; provides python3/pip3
+brew "python"        # latest stable; provides python3/pip3
 brew "rustup-init"   # `rustup-init -y` is run by 02-extras.sh
-cask "temurin@25"    # Java 25 LTS (released Sep 2025)
+cask "temurin@25"    # latest LTS (auto-pinned by 01-brew.sh)
 
 # --- DevOps / cloud-native --------------------------------------------------
 brew "podman"
