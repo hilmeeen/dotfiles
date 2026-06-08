@@ -36,7 +36,8 @@ The shell and logo steps are intentionally separate so you can opt out.
 ### GUI apps
 - Ghostty (terminal, with shaders)
 - VSCodium (Claude Code extension sideloaded from VS Code Marketplace; Dracula
-  + Solarized themes, defaulting to Solarized Dark)
+  + Solarized themes defaulting to Solarized Dark; JetBrains icon theme; plus
+  rainbow-csv and a JSON sort/format helper)
 - IntelliJ IDEA Community
 - KeyStore Explorer
 - Podman Desktop
@@ -92,7 +93,7 @@ gitignored — only the script is tracked.
 │   ├── 01-brew.sh             # brew bundle
 │   ├── 02-extras.sh           # rustup-init, claude code via npm
 │   ├── 03-ghostty-shaders.sh  # clone shaders, link config
-│   ├── 04-vscodium-extensions.sh  # sideload Claude Code .vsix; themes + default
+│   ├── 04-vscodium-extensions.sh  # extensions + themes, icon theme, layout defaults
 │   ├── 05-oc-3.11.sh          # amd64 oc CLI for OCP 3.11
 │   ├── 06-app-fonts.sh        # Nerd Font for VSCodium + Terminal.app
 │   └── 07-vscodium-logo.sh    # swap VSCodium blank-page logo (opt-in, sudo)
@@ -202,11 +203,14 @@ and CLI work, podman+Rosetta is enough.
   sideloads it from the VS Code Marketplace API as a `.vsix`. Re-run that
   script periodically to pick up updates, since VSCodium's auto-update
   doesn't see Marketplace-only extensions.
-- **VSCodium themes.** The same script installs the Dracula theme from Open VSX
-  and pins `workbench.colorTheme` to **Solarized Dark** (built into VSCodium, no
-  extension needed). Switch anytime via the theme picker; the script uses
-  `setdefault`, so a theme you pick manually survives re-runs. To reset it back
-  to Solarized Dark, delete the `workbench.colorTheme` key and re-run.
+- **VSCodium themes, icons & extensions.** The same script installs a handful of
+  extensions from Open VSX — the **Dracula** color theme, the **JetBrains** icon
+  theme, **rainbow-csv**, and a **JSON sort/format** helper — and seeds default
+  settings: `workbench.colorTheme` → **Solarized Dark** (built into VSCodium, no
+  extension needed), `workbench.iconTheme` → the JetBrains icons, the sidebar on
+  the right, and Claude Code in the panel. Each default is applied with
+  `setdefault`, so anything you later change in the UI survives re-runs; delete a
+  key from `settings.json` and re-run to let the script reset it.
 - **VSCodium blank-page logo.** The opt-in
   [`07-vscodium-logo.sh`](scripts/07-vscodium-logo.sh) swaps the empty-editor
   "letterpress" mark for a custom image. It edits files inside the app bundle, so

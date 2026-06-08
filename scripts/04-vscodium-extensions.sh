@@ -16,7 +16,10 @@ MARKETPLACE_EXTS=(
 
 # Extensions available on Open VSX (installed normally by codium).
 OPENVSX_EXTS=(
-  "dracula-theme.theme-dracula"   # Dracula color theme (Solarized ships built-in)
+  "dracula-theme.theme-dracula"               # Dracula color theme (Solarized ships built-in)
+  "ardonplay.vscode-jetbrains-icon-theme"     # JetBrains file/folder icon theme
+  "mechatroner.rainbow-csv"                   # colorize CSV/TSV columns
+  "saltcoreyan.json-format-sortcore"          # format + sort JSON keys
 )
 
 tmpdir="$(mktemp -d)"
@@ -29,7 +32,8 @@ download_vsix() {
   local url="https://marketplace.visualstudio.com/_apis/public/gallery/publishers/${publisher}/vsextensions/${name}/latest/vspackage"
   local out="$tmpdir/${publisher}.${name}.vsix"
 
-  echo "Fetching $ext from VS Code Marketplace..."
+  # Progress goes to stderr so the captured stdout is *only* the .vsix path.
+  echo "Fetching $ext from VS Code Marketplace..." >&2
   # Marketplace serves gzipped .vsix; -L follows redirects, --compressed handles gzip.
   if ! curl -fL --compressed -o "$out" "$url"; then
     echo "  failed to download $ext — install it manually." >&2
@@ -49,12 +53,12 @@ for ext in "${OPENVSX_EXTS[@]}"; do
   codium --install-extension "$ext" || true
 done
 
-# --- Default color theme ----------------------------------------------------
+# --- Default editor settings ------------------------------------------------
 # Solarized Dark / Solarized Light ship built-in with VSCodium, so no extension
-# is needed for them — we just point workbench.colorTheme at "Solarized Dark".
-# Dracula comes from the Open VSX extension installed above, so it's available
-# in the theme picker too. setdefault means a theme you later pick in the UI
-# isn't clobbered on re-run; delete the key to let this reset it.
+# is needed for the color theme — Dracula and the JetBrains icon theme come from
+# the Open VSX extensions installed above. Each key is applied with setdefault,
+# so anything you later change in the UI (theme, icon theme, layout) survives a
+# re-run; delete a key from settings.json to let this script reset it.
 VSCODIUM_SETTINGS="$HOME/Library/Application Support/VSCodium/User/settings.json"
 mkdir -p "$(dirname "$VSCODIUM_SETTINGS")"
 [[ -f "$VSCODIUM_SETTINGS" ]] || echo '{}' > "$VSCODIUM_SETTINGS"
@@ -65,11 +69,26 @@ path = pathlib.Path(sys.argv[1])
 try:
     data = json.loads(path.read_text())
 except json.JSONDecodeError:
-    print(f"warn: {path} is not valid JSON; leaving theme untouched", file=sys.stderr)
+    print(f"warn: {path} is not valid JSON; leaving settings untouched", file=sys.stderr)
     sys.exit(0)
-if data.setdefault("workbench.colorTheme", "Solarized Dark") == "Solarized Dark":
+
+defaults = {
+    "workbench.colorTheme": "Solarized Dark",
+    "workbench.iconTheme": "vscode-jetbrains-icon-theme-2023-auto",
+    "workbench.sideBar.location": "right",
+    "claudeCode.preferredLocation": "panel",
+}
+changed = False
+for key, value in defaults.items():
+    if key not in data:
+        data[key] = value
+        changed = True
+        print(f"  set {key} = {value!r}")
+    else:
+        print(f"  {key} already {data[key]!r}; left as-is.")
+if changed:
     path.write_text(json.dumps(data, indent=4) + "\n")
-    print(f"Default theme set to Solarized Dark: {path}")
+    print(f"VSCodium defaults written: {path}")
 else:
-    print(f"workbench.colorTheme already set to {data['workbench.colorTheme']!r}; left as-is.")
+    print("VSCodium defaults already present; nothing to change.")
 PY
