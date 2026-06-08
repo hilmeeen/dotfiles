@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
-# VSCodium uses Open VSX, which doesn't carry the Claude Code extension.
-# This script sideloads it (and any others listed below) from the VS Code
-# Marketplace API as .vsix files.
+# Installs VSCodium extensions from the Open VSX registry (the registry VSCodium
+# ships with). Open VSX now carries the Claude Code extension, including
+# platform-specific builds, and `codium --install-extension <id>` picks the
+# build matching the host os/arch automatically — so every extension installs
+# the same way by id.
 set -euo pipefail
 
 if ! command -v codium >/dev/null 2>&1; then
@@ -9,13 +11,9 @@ if ! command -v codium >/dev/null 2>&1; then
   exit 0
 fi
 
-# Extensions to sideload from VS Code Marketplace, format: publisher.name
-MARKETPLACE_EXTS=(
-  "Anthropic.claude-code"
-)
-
-# Extensions available on Open VSX (installed normally by codium).
+# Extensions to install from Open VSX, format: publisher.name
 OPENVSX_EXTS=(
+  "Anthropic.claude-code"                     # Claude Code (platform-specific; Open VSX serves the host build)
   "dracula-theme.theme-dracula"               # Dracula color theme (Solarized ships built-in)
   "ardonplay.vscode-jetbrains-icon-theme"     # JetBrains file/folder icon theme
   "mechatroner.rainbow-csv"                   # colorize CSV/TSV columns
@@ -23,35 +21,9 @@ OPENVSX_EXTS=(
   "mhutchie.git-graph"                        # GitLab-style repository/commit graph in-editor
 )
 
-tmpdir="$(mktemp -d)"
-trap 'rm -rf "$tmpdir"' EXIT
-
-download_vsix() {
-  local ext="$1"
-  local publisher="${ext%%.*}"
-  local name="${ext#*.}"
-  local url="https://marketplace.visualstudio.com/_apis/public/gallery/publishers/${publisher}/vsextensions/${name}/latest/vspackage"
-  local out="$tmpdir/${publisher}.${name}.vsix"
-
-  # Progress goes to stderr so the captured stdout is *only* the .vsix path.
-  echo "Fetching $ext from VS Code Marketplace..." >&2
-  # Marketplace serves gzipped .vsix; -L follows redirects, --compressed handles gzip.
-  if ! curl -fL --compressed -o "$out" "$url"; then
-    echo "  failed to download $ext — install it manually." >&2
-    return 1
-  fi
-  echo "$out"
-}
-
-for ext in "${MARKETPLACE_EXTS[@]}"; do
-  if vsix_path="$(download_vsix "$ext")"; then
-    codium --install-extension "$vsix_path" || \
-      echo "  codium refused $ext — you may need to install manually." >&2
-  fi
-done
-
 for ext in "${OPENVSX_EXTS[@]}"; do
-  codium --install-extension "$ext" || true
+  codium --install-extension "$ext" || \
+    echo "  codium refused $ext — you may need to install manually." >&2
 done
 
 # --- Default editor settings ------------------------------------------------
