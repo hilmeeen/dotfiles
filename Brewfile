@@ -23,6 +23,7 @@ brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 brew "fzf"
 brew "git"
+brew "sshpass"
 cask "ghostty"
 cask "font-jetbrains-mono-nerd-font"
 
