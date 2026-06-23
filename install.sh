@@ -34,6 +34,7 @@ run_step 03-ghostty-shaders.sh
 run_step 04-vscodium-extensions.sh
 run_step 05-oc-3.11.sh
 run_step 06-app-fonts.sh
+run_step 08-sqldeveloper-conf.sh
 
 # Optional opt-in steps, runnable in any order: ./install.sh shell logo
 for opt in "$@"; do
