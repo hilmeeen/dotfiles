@@ -46,7 +46,7 @@ except json.JSONDecodeError:
     sys.exit(0)
 
 defaults = {
-    "workbench.colorTheme": "Solarized Dark",
+    "workbench.colorTheme": "Dracula Theme",
     "workbench.iconTheme": "vscode-jetbrains-icon-theme-2023-auto",
     "workbench.sideBar.location": "right",
     "claudeCode.preferredLocation": "panel",

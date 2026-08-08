@@ -30,6 +30,7 @@ brew "git"
 brew "sshpass"
 cask "ghostty"
 cask "font-jetbrains-mono-nerd-font"
+cask "font-google-sans-code"        # editor font for VSCodium (terminal keeps JetBrainsMono Nerd Font)
 
 # --- GUI applications -------------------------------------------------------
 cask "vscodium"

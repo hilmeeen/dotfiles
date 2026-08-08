@@ -1,25 +1,33 @@
 #!/usr/bin/env bash
-# Apply JetBrains Mono Nerd Font to apps that don't read from this repo:
-#   - VSCodium (editor + integrated terminal)
-#   - macOS Terminal.app (Basic profile)
+# Apply fonts to apps that don't read from this repo:
+#   - VSCodium editor  → Google Sans Code (clean monospaced coding font)
+#   - VSCodium terminal → JetBrainsMono Nerd Font Mono (needed for Nerd Font glyphs)
+#   - macOS Terminal.app (Basic profile) → JetBrainsMono Nerd Font Mono
 #
 # Ghostty already picks the font up via ghostty/config in this repo, so it's
-# not touched here. Prereq: cask "font-jetbrains-mono-nerd-font" (Brewfile).
+# not touched here.
+# Prereqs: cask "font-google-sans-code" and cask "font-jetbrains-mono-nerd-font" (Brewfile).
 # Idempotent — safe to re-run.
 set -euo pipefail
 
-FONT_FAMILY="JetBrainsMono Nerd Font Mono"
-FONT_POSTSCRIPT="JetBrainsMonoNFM-Regular"  # PostScript name (Terminal.app needs this form)
+EDITOR_FONT="Google Sans Code"          # VSCodium code editor
+TERMINAL_FONT="JetBrainsMono Nerd Font Mono"  # VSCodium + Terminal.app (Nerd Font glyphs)
+TERMINAL_FONT_POSTSCRIPT="JetBrainsMonoNFM-Regular"  # PostScript name (Terminal.app needs this)
 FONT_SIZE=12
 
-# Bail early if the font isn't actually installed — avoids pointing apps at
-# a font that won't render. Check user and system font dirs independently;
-# `ls a b` would fail on the first missing arg even if the other exists.
-font_file="JetBrainsMonoNerdFontMono-Regular.ttf"
-if [[ ! -f "$HOME/Library/Fonts/$font_file" && ! -f "/Library/Fonts/$font_file" ]]; then
+# Bail early if JetBrainsMono Nerd Font is missing — terminal would break.
+jetbrains_file="JetBrainsMonoNerdFontMono-Regular.ttf"
+if [[ ! -f "$HOME/Library/Fonts/$jetbrains_file" && ! -f "/Library/Fonts/$jetbrains_file" ]]; then
   echo "JetBrains Mono Nerd Font not found in ~/Library/Fonts or /Library/Fonts." >&2
   echo "Run brew bundle first (cask font-jetbrains-mono-nerd-font), then re-run." >&2
   exit 0
+fi
+
+# Warn (but don't bail) if Google Sans Code is missing — editor falls back gracefully.
+google_sans_file="GoogleSansCode[wght].ttf"
+if [[ ! -f "$HOME/Library/Fonts/$google_sans_file" && ! -f "/Library/Fonts/$google_sans_file" ]]; then
+  echo "warn: Google Sans Code not found — editor will fall back to JetBrainsMono." >&2
+  echo "      Run brew bundle first (cask font-google-sans-code) to install it." >&2
 fi
 
 # --- VSCodium ---------------------------------------------------------------
@@ -30,17 +38,19 @@ if [[ -d "$VSCODIUM_DIR" ]] || command -v codium >/dev/null 2>&1; then
   mkdir -p "$VSCODIUM_DIR"
   [[ -f "$VSCODIUM_SETTINGS" ]] || echo '{}' > "$VSCODIUM_SETTINGS"
 
-  /usr/bin/python3 - "$VSCODIUM_SETTINGS" "$FONT_FAMILY" <<'PY'
+  /usr/bin/python3 - "$VSCODIUM_SETTINGS" "$EDITOR_FONT" "$TERMINAL_FONT" <<'PY'
 import json, sys, pathlib
-path, font = pathlib.Path(sys.argv[1]), sys.argv[2]
+path, editor_font, terminal_font = pathlib.Path(sys.argv[1]), sys.argv[2], sys.argv[3]
 try:
     data = json.loads(path.read_text())
 except json.JSONDecodeError:
     print(f"warn: {path} is not valid JSON; leaving untouched", file=sys.stderr)
     sys.exit(0)
-data["editor.fontFamily"] = f"{font}, Menlo, Monaco, 'Courier New', monospace"
+# Editor: Google Sans Code first, JetBrainsMono as fallback, then system fallbacks
+data["editor.fontFamily"] = f"'{editor_font}', {terminal_font}, Menlo, Monaco, 'Courier New', monospace"
 data.setdefault("editor.fontLigatures", True)   # respect user override if already set
-data["terminal.integrated.fontFamily"] = font
+# Terminal keeps JetBrainsMono Nerd Font for glyph/icon support (Starship, etc.)
+data["terminal.integrated.fontFamily"] = terminal_font
 path.write_text(json.dumps(data, indent=4) + "\n")
 print(f"VSCodium settings updated: {path}")
 PY
