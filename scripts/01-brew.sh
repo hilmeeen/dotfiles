@@ -2,6 +2,10 @@
 # Install everything declared in the Brewfile.
 set -euo pipefail
 
+# Resolve the repo root so this script also works when run directly, not just
+# via install.sh (which exports DOTFILES_DIR).
+DOTFILES_DIR="${DOTFILES_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Pin Temurin to the newest Java LTS. Adoptium ships a feature release every 6

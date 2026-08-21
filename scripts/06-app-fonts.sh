@@ -63,15 +63,15 @@ fi
 # AppleScript is the only sane path. This will briefly launch Terminal.app.
 if osascript -e 'tell application "System Events" to exists application process "Finder"' >/dev/null 2>&1; then
   current="$(osascript -e 'tell application "Terminal" to get font name of settings set "Basic"' 2>/dev/null || true)"
-  if [[ "$current" != "$FONT_POSTSCRIPT" ]]; then
-    echo "Setting Terminal.app Basic profile font to $FONT_FAMILY..."
+  if [[ "$current" != "$TERMINAL_FONT_POSTSCRIPT" ]]; then
+    echo "Setting Terminal.app Basic profile font to $TERMINAL_FONT..."
     osascript <<APPLESCRIPT
 tell application "Terminal"
-    set font name of settings set "Basic" to "$FONT_POSTSCRIPT"
+    set font name of settings set "Basic" to "$TERMINAL_FONT_POSTSCRIPT"
     set font size of settings set "Basic" to $FONT_SIZE
 end tell
 APPLESCRIPT
   else
-    echo "Terminal.app Basic profile already on $FONT_POSTSCRIPT."
+    echo "Terminal.app Basic profile already on $TERMINAL_FONT_POSTSCRIPT."
   fi
 fi
