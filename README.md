@@ -27,7 +27,7 @@ The shell and logo steps are intentionally separate so you can opt out.
 - Rust (via rustup, stable toolchain)
 
 ### CLIs
-- claude (Claude Code, via npm)
+- claude (Claude Code, via the official native installer — no Node dependency)
 - gh, git
 - kubectl, helm, oc (OpenShift CLI), podman
 - k6, jmeter
@@ -35,9 +35,9 @@ The shell and logo steps are intentionally separate so you can opt out.
 
 ### GUI apps
 - Ghostty (terminal, with shaders)
-- VSCodium (Claude Code extension from Open VSX; Dracula
-  + Solarized themes defaulting to Solarized Dark; JetBrains icon theme; plus
-  rainbow-csv, a JSON sort/format helper, and Git Graph)
+- VSCodium (Claude Code extension from Open VSX; Dracula theme by default,
+  Solarized ships built-in; JetBrains icon theme; plus rainbow-csv, a JSON
+  sort/format helper, and Git Graph)
 - IntelliJ IDEA Community
 - KeyStore Explorer
 - Podman Desktop
@@ -45,6 +45,7 @@ The shell and logo steps are intentionally separate so you can opt out.
 - CotEditor (Notepad++ replacement — plain-text editor with macOS auto-save & version history, so unsaved windows persist across crashes/restarts)
 - Shottr (Greenshot/Lightshot replacement — local-only screenshot tool with blur/highlight/arrow/line/text annotations, scrolling capture, OCR; no cloud, no account)
 - GitUp (FOSS Git GUI with a live commit/branch graph — GitLab-style network view that GitHub lacks)
+- DBeaver Community (universal database tool / SQL client — Oracle, Postgres, MySQL, …)
 
 ### Terminal look
 - Ghostty + JetBrains Mono Nerd Font
@@ -53,9 +54,11 @@ The shell and logo steps are intentionally separate so you can opt out.
   cloned into `~/.config/ghostty/shaders`.
 - Edit shader stack in [`ghostty/config`](ghostty/config) — multiple
   `custom-shader =` lines compose, each running on the previous one's output.
-- [`06-app-fonts.sh`](scripts/06-app-fonts.sh) also wires the same Nerd Font
-  into VSCodium (editor + integrated terminal) and macOS Terminal.app (Basic
-  profile). Ghostty already reads it from [`ghostty/config`](ghostty/config).
+- [`06-app-fonts.sh`](scripts/06-app-fonts.sh) also sets app fonts: the VSCodium
+  **editor** gets **Google Sans Code** (with JetBrainsMono as fallback), while
+  the VSCodium **integrated terminal** and macOS Terminal.app (Basic profile)
+  keep JetBrainsMono Nerd Font Mono for glyph support. Ghostty already reads its
+  font from [`ghostty/config`](ghostty/config).
   The starship prompt in [`shell/starship.toml`](shell/starship.toml) uses
   Nerd Font glyphs ( python,  node,  go,  rust,  java,  git
   branch), so the font is required for the prompt to render correctly.
@@ -92,12 +95,13 @@ gitignored — only the script is tracked.
 ├── scripts/
 │   ├── 00-prereqs.sh          # Xcode CLT + Homebrew
 │   ├── 01-brew.sh             # brew bundle
-│   ├── 02-extras.sh           # rustup-init, claude code via npm
+│   ├── 02-extras.sh           # rustup, claude code (native), rosetta + podman machine
 │   ├── 03-ghostty-shaders.sh  # clone shaders, link config
 │   ├── 04-vscodium-extensions.sh  # extensions + themes, icon theme, layout defaults
 │   ├── 05-oc-3.11.sh          # amd64 oc CLI for OCP 3.11
-│   ├── 06-app-fonts.sh        # Nerd Font for VSCodium + Terminal.app
-│   └── 07-vscodium-logo.sh    # swap VSCodium blank-page logo (opt-in, sudo)
+│   ├── 06-app-fonts.sh        # editor + terminal fonts for VSCodium, Terminal.app
+│   ├── 07-vscodium-logo.sh    # swap VSCodium blank-page logo (opt-in, sudo)
+│   └── 08-coteditor-theme.sh  # download + set Dracula theme for CotEditor
 ├── ghostty/
 │   └── config                 # symlinked into ~/.config/ghostty/
 ├── vscodium/                  # gitignored: fetched logo + stock-SVG backup
@@ -209,11 +213,18 @@ and CLI work, podman+Rosetta is enough.
   extensions from Open VSX — the **Dracula** color theme, the **JetBrains** icon
   theme, **rainbow-csv**, a **JSON sort/format** helper, and **Git Graph** (a
   GitLab-style repository/commit graph in the editor) — and seeds default
-  settings: `workbench.colorTheme` → **Solarized Dark** (built into VSCodium, no
-  extension needed), `workbench.iconTheme` → the JetBrains icons, the sidebar on
-  the right, and Claude Code in the panel. Each default is applied with
-  `setdefault`, so anything you later change in the UI survives re-runs; delete a
-  key from `settings.json` and re-run to let the script reset it.
+  settings: `workbench.colorTheme` → **Dracula Theme** (Solarized Dark/Light also
+  ship built into VSCodium if you prefer them), `workbench.iconTheme` → the
+  JetBrains icons, the sidebar on the right, and Claude Code in the panel. Each
+  default *in this script* is applied with `setdefault`, so anything you later
+  change in the UI survives re-runs; delete a key from `settings.json` and re-run
+  to let the script reset it. Note the fonts are the exception — see below.
+- **Fonts are force-applied, unlike other settings.**
+  [`06-app-fonts.sh`](scripts/06-app-fonts.sh) assigns `editor.fontFamily` and
+  `terminal.integrated.fontFamily` outright on every run, so a font you pick in
+  the VSCodium UI is overwritten the next time the script runs (only
+  `editor.fontLigatures` uses `setdefault`). Change the font at the top of that
+  script rather than in the UI if you want it to stick.
 - **VSCodium blank-page logo.** The opt-in
   [`07-vscodium-logo.sh`](scripts/07-vscodium-logo.sh) swaps the empty-editor
   "letterpress" mark for a custom image. It edits files inside the app bundle, so
