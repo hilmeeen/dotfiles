@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Install things that don't fit cleanly in the Brewfile:
 #   - Rust toolchain via rustup
-#   - Claude Code CLI via npm
+#   - Claude Code CLI via the official native installer
 #   - Rosetta 2 + podman machine (linux/amd64 cross-arch via Rosetta)
 set -euo pipefail
 
