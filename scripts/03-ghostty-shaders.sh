@@ -2,6 +2,10 @@
 # Clone hackr-sh/ghostty-shaders into ~/.config/ghostty/shaders and link config.
 set -euo pipefail
 
+# Resolve the repo root so this script also works when run directly, not just
+# via install.sh (which exports DOTFILES_DIR).
+DOTFILES_DIR="${DOTFILES_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+
 GHOSTTY_DIR="$HOME/.config/ghostty"
 SHADERS_DIR="$GHOSTTY_DIR/shaders"
 SHADERS_REPO="https://github.com/hackr-sh/ghostty-shaders.git"
