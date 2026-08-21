@@ -41,3 +41,4 @@ cask "zen-browser"
 cask "coteditor"           # Notepad++-equivalent: plain-text editor with auto-save & versions
 cask "shottr"              # Greenshot-equivalent: local screenshot tool with annotations (blur/highlight/arrows)
 cask "gitup"               # FOSS Git GUI with a live commit/branch graph (GitLab-style network view)
+cask "dbeaver-community"   # universal database tool / SQL client (community edition)
