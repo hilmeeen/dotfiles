@@ -223,6 +223,24 @@ and CLI work, podman+Rosetta is enough.
   (`intellij-idea-ce`). Swap to `intellij-idea` for Ultimate.
 - **Java version.** Pinned to `temurin@25` (Java 25 LTS, released Sep 2025).
   Bump in the Brewfile when the next LTS lands.
+- **`krun` tap rename (one-time cleanup).** The Podman machine dependencies moved
+  from `slp/krun` to `libkrun/krun` upstream (same repo, renamed — the old URL
+  301-redirects). [`Brewfile`](Brewfile) now taps the new name. If you ran an
+  older revision, both taps may be present locally, and `brew bundle` aborts with
+  `Error: Formulae found in multiple taps`. Fully-qualifying the Brewfile entries
+  does **not** help — `libkrun` pulls `libkrunfw` by bare name, so resolution
+  fails one level down. Clear it once with:
+  ```sh
+  brew untap slp/krun   # refuses while its formulae are installed
+  ```
+  If it refuses, re-point the receipts at the new tap first, then untap:
+  ```sh
+  brew reinstall libkrun/krun/libkrunfw libkrun/krun/libkrun libkrun/krun/krunkit
+  brew untap slp/krun
+  ```
+  Do **not** use `brew untap --force` — it uninstalls the tap's formulae, which
+  are exactly the deps `podman machine` needs to start. Restart the machine
+  (`podman machine stop && podman machine start`) after a reinstall.
 - **Editing the shader stack.** To try other looks (e.g. `bettercrt`, `bloom`,
   `crt`, `cineShader-Lava`), add `custom-shader =` lines in
   [`ghostty/config`](ghostty/config). All shaders from the upstream repo are
