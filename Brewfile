@@ -9,7 +9,10 @@ brew "rustup-init"   # `rustup-init -y` is run by 02-extras.sh
 cask "temurin@25"    # latest LTS (auto-pinned by 01-brew.sh)
 
 # --- DevOps / cloud-native --------------------------------------------------
-tap "slp/krun"                   # provides libkrun + krunkit (Podman machine dependencies on macOS)
+# Renamed upstream from slp/krun; tapping the old name alongside this one makes
+# `libkrun` ambiguous and aborts `brew bundle`. If you tapped slp/krun before,
+# see README for the one-time cleanup.
+tap "libkrun/krun"               # provides libkrun + krunkit (Podman machine dependencies on macOS)
 brew "libepoxy"                  # required by libkrun
 brew "libkrun"                   # Apple Hypervisor Framework backend for Podman machine
 brew "krunkit"                   # Podman machine driver on macOS (reinstall these three if machine fails to start)
