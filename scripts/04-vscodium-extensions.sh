@@ -19,6 +19,7 @@ OPENVSX_EXTS=(
   "mechatroner.rainbow-csv"                   # colorize CSV/TSV columns
   "saltcoreyan.json-format-sortcore"          # format + sort JSON keys
   "mhutchie.git-graph"                        # GitLab-style repository/commit graph in-editor
+  "cweijan.dbclient-jdbc"                     # SQL Developer-like DB client (Oracle/MySQL/PG); uses JDBC (needs JRE — temurin@25)
 )
 
 for ext in "${OPENVSX_EXTS[@]}"; do
