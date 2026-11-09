@@ -18,8 +18,8 @@ Core steps always run in order:
 |---|---|
 | `00-prereqs.sh` | Xcode CLT + Homebrew |
 | `01-brew.sh` | `brew bundle` the Brewfile; auto-pins `temurin` LTS |
-| `02-extras.sh` | Rust via rustup, Claude Code CLI via npm |
-| `03-ghostty-shaders.sh` | Clone ghostty-shaders → `~/.config/ghostty/shaders` |
+| `02-extras.sh` | Rust via rustup, Claude Code CLI (native installer), Rosetta 2 + `podman machine` init/start |
+| `03-ghostty-shaders.sh` | Clone ghostty-shaders → `~/.config/ghostty/shaders`; symlink `ghostty/config` |
 | `04-vscodium-extensions.sh` | Open VSX extensions + default settings |
 | `05-oc-3.11.sh` | OCP 3.11 `oc` client (Linux build, for remote use) |
 | `06-app-fonts.sh` | Fonts for VSCodium + Terminal.app |
@@ -36,8 +36,12 @@ Opt-in steps (any order): `./install.sh shell logo`
   `setdefault`-style checks, or "already set" short-circuits before writing.
 - **Skip gracefully** when a target app/tool isn't installed (`exit 0`, not error).
 - **App settings not in this repo** (VSCodium `settings.json`, CotEditor,
-  Terminal.app) are edited in place by scripts, not symlinked/tracked. VSCodium
-  settings use `setdefault` so UI changes survive re-runs; delete a key to reset it.
+  Terminal.app) are edited in place by scripts, not symlinked/tracked.
+  `04-vscodium-extensions.sh` uses `setdefault`, so UI changes survive re-runs;
+  delete a key to reset it. **Exception:** `06-app-fonts.sh` force-assigns
+  `editor.fontFamily` and `terminal.integrated.fontFamily` on every run, so a
+  font chosen in the UI is overwritten — only `editor.fontLigatures` respects an
+  existing value. Prefer `setdefault` for new settings.
 - New install step → add `scripts/NN-name.sh`, `chmod +x`, wire into `install.sh`.
 - New package → prefer adding a line to `Brewfile` over a bespoke script.
 
